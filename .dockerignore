@@ -1,0 +1,6 @@
+target/
+config/
+.idea/
+.claude/
+.git/
+*.iml
