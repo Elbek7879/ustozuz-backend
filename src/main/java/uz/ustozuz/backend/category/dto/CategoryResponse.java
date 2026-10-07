@@ -4,6 +4,7 @@ public record CategoryResponse(
         Long id,
         String title,
         String description,
-        String icon
+        String icon,
+        long coursesCount
 ) {
 }

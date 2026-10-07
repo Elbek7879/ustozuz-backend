@@ -22,6 +22,8 @@ public interface CourseRepository extends JpaRepository<Course, Long>, JpaSpecif
 
     long countByStatus(CourseStatus status);
 
+    long countByCategoryIdAndStatus(Long categoryId, CourseStatus status);
+
     @Query("select coalesce(avg(c.ratingAvg), 0) from Course c where c.status = :status and c.ratingCount > 0")
     double averageRating(@Param("status") CourseStatus status);
 }
