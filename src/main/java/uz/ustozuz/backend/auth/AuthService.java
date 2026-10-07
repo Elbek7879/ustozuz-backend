@@ -1,9 +1,10 @@
 package uz.ustozuz.backend.auth;
 
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Base64;
+import java.util.Locale;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,15 +34,19 @@ public class AuthService {
     private final JwtService jwtService;
     private final MailService mailService;
 
+    private static final Duration RESET_TOKEN_TTL = Duration.ofHours(1);
+    private static final Duration RESEND_INTERVAL = Duration.ofMinutes(1);
+
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.email())) {
+        String email = normalizeEmail(request.email());
+        if (userRepository.existsByEmailIgnoreCase(email)) {
             throw new ConflictException("Bu email allaqachon ro'yxatdan o'tgan");
         }
 
         User user = new User();
-        user.setName(request.name());
-        user.setEmail(request.email());
+        user.setName(request.name().trim());
+        user.setEmail(email);
         user.setPasswordHash(passwordEncoder.encode(request.password()));
         user.setRole(Role.STUDENT);
         userRepository.save(user);
@@ -51,7 +56,7 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.email())
+        User user = userRepository.findByEmailIgnoreCase(normalizeEmail(request.email()))
                 .orElseThrow(() -> new BadRequestException("Email yoki parol noto'g'ri"));
 
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
@@ -65,19 +70,35 @@ public class AuthService {
         return buildAuthResponse(user);
     }
 
+    // Email ro'yxatda bo'lmasa ham bir xil javob qaytadi — begona odam qaysi email borligini bilmasin
     @Transactional
     public void forgotPassword(String email) {
-        userRepository.findByEmail(email).ifPresent(user -> {
-            String rawToken = generateRandomToken();
+        userRepository.findByEmailIgnoreCase(normalizeEmail(email))
+                .filter(user -> user.getStatus() != UserStatus.BLOCKED)
+                .ifPresent(user -> {
+                    Instant now = Instant.now();
 
-            PasswordResetToken resetToken = new PasswordResetToken();
-            resetToken.setUser(user);
-            resetToken.setToken(rawToken);
-            resetToken.setExpiresAt(Instant.now().plus(1, ChronoUnit.HOURS));
-            resetTokenRepository.save(resetToken);
+                    // Bir daqiqada bir martadan ko'p xat yubormaymiz (pochtani to'ldirib tashlamaslik uchun)
+                    if (resetTokenRepository.existsByUserIdAndExpiresAtAfter(
+                            user.getId(), now.plus(RESET_TOKEN_TTL).minus(RESEND_INTERVAL))) {
+                        return;
+                    }
 
-            mailService.sendPasswordResetEmail(user.getEmail(), rawToken);
-        });
+                    String rawToken = generateRandomToken();
+
+                    PasswordResetToken resetToken = new PasswordResetToken();
+                    resetToken.setUser(user);
+                    resetToken.setToken(rawToken);
+                    resetToken.setExpiresAt(now.plus(RESET_TOKEN_TTL));
+                    resetTokenRepository.save(resetToken);
+
+                    // Xat yuborilmasa tranzaksiya bekor bo'ladi va token saqlanmaydi
+                    mailService.sendPasswordResetEmail(user.getEmail(), user.getName(), rawToken);
+                });
+    }
+
+    private static String normalizeEmail(String email) {
+        return email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
     }
 
     @Transactional

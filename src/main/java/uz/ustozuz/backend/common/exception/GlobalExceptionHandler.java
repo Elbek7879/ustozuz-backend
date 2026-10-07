@@ -39,6 +39,11 @@ public class GlobalExceptionHandler {
         return error(HttpStatus.CONFLICT, ex.getMessage());
     }
 
+    @ExceptionHandler(ServiceUnavailableException.class)
+    public ResponseEntity<ApiError> handleUnavailable(ServiceUnavailableException ex) {
+        return error(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiError> handleAuthentication(AuthenticationException ex) {
         return error(HttpStatus.UNAUTHORIZED, "Tizimga kirish talab qilinadi");

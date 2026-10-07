@@ -21,10 +21,24 @@ public class AppProperties {
 
     private Seed seed = new Seed();
 
+    private Mail mail = new Mail();
+
     @Getter
     @Setter
     public static class Seed {
         private String adminPassword;
         private String instructorPassword;
+    }
+
+    @Getter
+    @Setter
+    public static class Mail {
+        // "log" — xat konsolga yoziladi (lokal); "brevo" — Brevo HTTPS API orqali haqiqiy xat
+        private String provider = "log";
+        private String brevoApiKey;
+        private String brevoUrl = "https://api.brevo.com/v3/smtp/email";
+        // Brevo'da tasdiqlangan jo'natuvchi manzil
+        private String fromEmail;
+        private String fromName = "UstozUz";
     }
 }

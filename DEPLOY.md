@@ -32,8 +32,16 @@ Taxminiy vaqt: 40–60 daqiqa (birinchi marta).
 | `JWT_SECRET` | kamida 32 belgili tasodifiy satr (pastga qarang) |
 | `ADMIN_PASSWORD` | admin uchun kuchli parol (o'zingiz o'ylab toping) |
 | `INSTRUCTOR_PASSWORD` | namunaviy ustozlar uchun parol |
-| `FRONTEND_URL` | hozircha bo'sh qoldiring — 3-qadamdan keyin to'ldiriladi |
-| `CORS_ORIGINS` | hozircha bo'sh qoldiring — 3-qadamdan keyin to'ldiriladi |
+| `FRONTEND_URL` | hozircha **qo'shmang** — 4-bo'limda qo'shiladi |
+| `CORS_ORIGINS` | hozircha **qo'shmang** — 4-bo'limda qo'shiladi |
+
+   Parolni tiklash xatlari uchun (2.5-bo'lim) yana uchtasi:
+
+| O'zgaruvchi | Qiymat |
+|---|---|
+| `MAIL_PROVIDER` | `brevo` |
+| `BREVO_API_KEY` | Brevo'dan olingan API kalit |
+| `MAIL_FROM_EMAIL` | Brevo'da tasdiqlangan jo'natuvchi email |
 
    `JWT_SECRET` yasash uchun Git Bash'da:
    ```bash
@@ -46,6 +54,31 @@ Taxminiy vaqt: 40–60 daqiqa (birinchi marta).
 
 > Bo'sh bazada backend birinchi ishga tushganda kategoriyalar, 10 ta ustoz,
 > 10 ta kurs va admin hisobini o'zi yaratadi.
+
+---
+
+## 2.5. Brevo: parolni tiklash xatlari (bepul, kuniga 300 ta)
+
+Railway'ning Trial/Hobby tariflarida oddiy email portlari (SMTP) yopiq, shuning uchun
+xatlar Brevo'ning HTTPS API'si orqali yuboriladi.
+
+1. https://www.brevo.com da ro'yxatdan o'ting (karta talab qilinmaydi).
+2. **Senders, Domains & Dedicated IPs → Senders → Add a sender**: jo'natuvchi sifatida
+   o'z emailingizni (masalan, Gmail) qo'shing va pochtangizga kelgan xat orqali tasdiqlang.
+3. **SMTP & API → API Keys → Generate a new API key** → kalitni nusxalang
+   (u faqat bir marta ko'rsatiladi).
+4. Railway → backend → Variables: `MAIL_PROVIDER=brevo`, `BREVO_API_KEY=<kalit>`,
+   `MAIL_FROM_EMAIL=<2-qadamdagi email>`.
+5. Tekshirish: saytda "Parolni unutdingizmi?" → o'z emailingizni kiriting → xat kelishi kerak.
+   Birinchi xatlar "Spam" papkasiga tushishi mumkin.
+
+Lokal kompyuterda sinash uchun xuddi shu qiymatlarni `config/application.properties` ga yozing:
+```properties
+app.mail.provider=brevo
+app.mail.brevo-api-key=<kalit>
+app.mail.from-email=<tasdiqlangan email>
+```
+va backend'ni qayta ishga tushiring. Bu qatorlar bo'lmasa, havola backend konsoliga yoziladi.
 
 ---
 
