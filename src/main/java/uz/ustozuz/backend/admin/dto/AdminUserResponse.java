@@ -1,4 +1,14 @@
 package uz.ustozuz.backend.admin.dto;
 
-public class AdminUserResponse {
+import java.time.Instant;
+
+public record AdminUserResponse(
+        Long id,
+        String name,
+        String email,
+        String phone,
+        String role,
+        String status,
+        Instant createdAt
+) {
 }
