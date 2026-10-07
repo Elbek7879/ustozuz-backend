@@ -99,10 +99,7 @@ public class AuthService {
 
     private AuthResponse buildAuthResponse(User user) {
         String token = jwtService.generateToken(user);
-        UserResponse userResponse = new UserResponse(
-                user.getId(), user.getName(), user.getEmail(), user.getPhone(), user.getRole().name()
-        );
-        return new AuthResponse(token, userResponse);
+        return new AuthResponse(token, UserResponse.from(user));
     }
 
     private String generateRandomToken() {
