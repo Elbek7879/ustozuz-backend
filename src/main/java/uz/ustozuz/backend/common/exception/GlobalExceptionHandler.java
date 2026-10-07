@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -59,7 +60,8 @@ public class GlobalExceptionHandler {
     }
 
     // Noto'g'ri JSON yoki noto'g'ri turdagi parametr (masalan /courses/abc)
-    @ExceptionHandler({HttpMessageNotReadableException.class, TypeMismatchException.class})
+    @ExceptionHandler({HttpMessageNotReadableException.class, TypeMismatchException.class,
+            PropertyReferenceException.class})
     public ResponseEntity<ApiError> handleBadInput(Exception ex) {
         return error(HttpStatus.BAD_REQUEST, "So'rov ma'lumotlari noto'g'ri");
     }
