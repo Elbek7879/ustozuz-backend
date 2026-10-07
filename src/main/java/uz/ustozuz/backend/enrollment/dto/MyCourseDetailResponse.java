@@ -1,18 +1,19 @@
 package uz.ustozuz.backend.enrollment.dto;
 
 import java.time.Instant;
+import java.util.List;
 
-public record MyCourseResponse(
+public record MyCourseDetailResponse(
         Long courseId,
         String slug,
         String title,
+        String description,
         String instructorName,
         String category,
         String imageUrl,
         int progress,
-        int lessonsCount,
-        int completedLessons,
-        Instant enrolledAt,
-        Instant completedAt
+        Instant completedAt,
+        Long certificateId,
+        List<MyLessonResponse> lessons
 ) {
 }

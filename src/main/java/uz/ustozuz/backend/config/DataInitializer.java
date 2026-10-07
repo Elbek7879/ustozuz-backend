@@ -1,11 +1,13 @@
 package uz.ustozuz.backend.config;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +17,8 @@ import uz.ustozuz.backend.common.util.SlugUtil;
 import uz.ustozuz.backend.course.Course;
 import uz.ustozuz.backend.course.CourseRepository;
 import uz.ustozuz.backend.course.CourseStatus;
+import uz.ustozuz.backend.lesson.Lesson;
+import uz.ustozuz.backend.lesson.LessonRepository;
 import uz.ustozuz.backend.user.Role;
 import uz.ustozuz.backend.user.User;
 import uz.ustozuz.backend.user.UserRepository;
@@ -28,23 +32,75 @@ public class DataInitializer implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AppProperties appProperties;
+    private final LessonRepository lessonRepository;
 
     @Override
+    @Transactional
     public void run(String... args) {
-        if (categoryRepository.count() > 0) {
-            return; // Ma'lumotlar allaqachon bor, qayta yozmaymiz
+        // Ma'lumotlar allaqachon bo'lsa, qayta yozmaymiz
+        if (categoryRepository.count() == 0) {
+            AppProperties.Seed seed = appProperties.getSeed();
+            if (isBlank(seed.getAdminPassword()) || isBlank(seed.getInstructorPassword())) {
+                throw new IllegalStateException(
+                        "Bo'sh bazani to'ldirish uchun ADMIN_PASSWORD va INSTRUCTOR_PASSWORD o'rnatilishi kerak");
+            }
+
+            Map<String, Category> categories = createCategories();
+            Map<String, User> instructors = createInstructors();
+            createAdmin();
+            createCourses(categories, instructors);
         }
 
-        AppProperties.Seed seed = appProperties.getSeed();
-        if (isBlank(seed.getAdminPassword()) || isBlank(seed.getInstructorPassword())) {
-            throw new IllegalStateException(
-                    "Bo'sh bazani to'ldirish uchun ADMIN_PASSWORD va INSTRUCTOR_PASSWORD o'rnatilishi kerak");
-        }
+        createDemoLessons();
+    }
 
-        Map<String, Category> categories = createCategories();
-        Map<String, User> instructors = createInstructors();
-        createAdmin();
-        createCourses(categories, instructors);
+    // Namunaviy kurslarga darslar: faqat darsi yo'q bo'lsa qo'shiladi (eski bazalar uchun ham)
+    private void createDemoLessons() {
+        Map<String, List<String>> lessonsBySlug = Map.of(
+                "frontend-dasturlash-noldan-mutaxassisgacha", List.of(
+                        "Kirish: veb qanday ishlaydi", "HTML asoslari", "CSS va moslashuvchan dizayn",
+                        "JavaScript asoslari", "React bilan birinchi ilova", "Yakuniy loyiha"),
+                "uiux-dizayn-asoslari", List.of(
+                        "UI va UX farqi", "Rang va tipografiya", "Figma bilan ishlash",
+                        "Foydalanuvchi tadqiqoti", "Prototip yaratish"),
+                "raqamli-marketing-va-smm", List.of(
+                        "Raqamli marketingga kirish", "Maqsadli auditoriya", "Instagram va Telegram strategiyasi",
+                        "Reklama kampaniyalari", "Natijalarni tahlil qilish"),
+                "python-bilan-suniy-intellekt", List.of(
+                        "Python asoslari", "NumPy va Pandas", "Mashinaviy o'rganishga kirish",
+                        "Neyron tarmoqlar", "Amaliy loyiha: tasvirni aniqlash"),
+                "backend-dasturlash-java-asoslari", List.of(
+                        "Java sintaksisi", "OOP tamoyillari", "Kolleksiyalar va oqimlar",
+                        "Spring Boot bilan REST API", "Ma'lumotlar bazasi bilan ishlash"),
+                "ingliz-tili-nutq-va-grammatika", List.of(
+                        "Tanishuv va asosiy iboralar", "Present va Past zamonlar", "So'z boyligini oshirish",
+                        "Erkin suhbat mashqlari", "IELTS speaking tayyorgarligi"),
+                "portret-fotografiya-siri", List.of(
+                        "Kamera sozlamalari", "Yorug'lik bilan ishlash", "Kompozitsiya qoidalari",
+                        "Model bilan ishlash", "Lightroom'da tahrirlash"),
+                "shaxsiy-moliyani-boshqarish", List.of(
+                        "Moliyaviy maqsadlar", "Byudjet tuzish", "Jamg'arma va zaxira fondi",
+                        "Investitsiyaga kirish", "Qarzlarni boshqarish"),
+                "uy-sharoitida-fitnes-dasturi", List.of(
+                        "Isinish va cho'zilish", "Kuch mashqlari", "Kardio mashg'ulotlar",
+                        "To'g'ri ovqatlanish", "30 kunlik reja"),
+                "gitarada-chalishni-organish", List.of(
+                        "Gitara tuzilishi va sozlash", "Birinchi akkordlar", "Ritm va urish usullari",
+                        "Oddiy qo'shiqlar", "Barre akkordlar")
+        );
+
+        lessonsBySlug.forEach((slug, titles) ->
+                courseRepository.findBySlug(slug)
+                        .filter(course -> lessonRepository.countByCourseId(course.getId()) == 0)
+                        .ifPresent(course -> {
+                            for (int i = 0; i < titles.size(); i++) {
+                                Lesson lesson = new Lesson();
+                                lesson.setCourse(course);
+                                lesson.setTitle(titles.get(i));
+                                lesson.setOrderIndex(i);
+                                lessonRepository.save(lesson);
+                            }
+                        }));
     }
 
     private Map<String, Category> createCategories() {

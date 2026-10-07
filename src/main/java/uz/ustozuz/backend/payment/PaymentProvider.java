@@ -1,4 +1,9 @@
 package uz.ustozuz.backend.payment;
 
-public class PaymentProvider {
+import uz.ustozuz.backend.order.Order;
+
+// Payme/Click ulanganda shu interfeysning haqiqiy amalga oshirilishi yoziladi
+public interface PaymentProvider {
+
+    PaymentResult charge(Order order);
 }
