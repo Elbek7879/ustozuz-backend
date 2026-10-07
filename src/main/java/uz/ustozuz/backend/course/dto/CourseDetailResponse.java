@@ -1,5 +1,7 @@
 package uz.ustozuz.backend.course.dto;
 
+import java.util.List;
+
 public record CourseDetailResponse(
         Long id,
         String title,
@@ -11,6 +13,7 @@ public record CourseDetailResponse(
         int ratingCount,
         int studentsCount,
         long price,
-        String imageUrl
+        String imageUrl,
+        List<String> lessons
 ) {
 }

@@ -3,6 +3,7 @@ package uz.ustozuz.backend.lesson;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import uz.ustozuz.backend.common.exception.BadRequestException;
 import uz.ustozuz.backend.common.exception.NotFoundException;
 import uz.ustozuz.backend.course.Course;
 import uz.ustozuz.backend.course.CourseRepository;
+import uz.ustozuz.backend.enrollment.LessonProgressRepository;
 import uz.ustozuz.backend.lesson.dto.LessonRequest;
 import uz.ustozuz.backend.lesson.dto.LessonResponse;
 import uz.ustozuz.backend.user.User;
@@ -22,6 +24,7 @@ public class LessonService {
 
     private final LessonRepository lessonRepository;
     private final CourseRepository courseRepository;
+    private final LessonProgressRepository lessonProgressRepository;
 
     @Transactional(readOnly = true)
     public List<LessonResponse> findByCourse(User instructor, Long courseId) {
@@ -39,7 +42,7 @@ public class LessonService {
 
         Lesson lesson = new Lesson();
         lesson.setCourse(course);
-        lesson.setTitle(request.title());
+        lesson.setTitle(request.title().trim());
         lesson.setOrderIndex(nextIndex);
 
         lessonRepository.save(lesson);
@@ -49,7 +52,7 @@ public class LessonService {
     @Transactional
     public LessonResponse update(User instructor, Long courseId, Long lessonId, LessonRequest request) {
         Lesson lesson = getOwnedLesson(instructor, courseId, lessonId);
-        lesson.setTitle(request.title());
+        lesson.setTitle(request.title().trim());
         lessonRepository.save(lesson);
         return toResponse(lesson);
     }
@@ -57,12 +60,16 @@ public class LessonService {
     @Transactional
     public void delete(User instructor, Long courseId, Long lessonId) {
         Lesson lesson = getOwnedLesson(instructor, courseId, lessonId);
+        lessonProgressRepository.deleteByLessonId(lesson.getId());
         lessonRepository.delete(lesson);
     }
 
     @Transactional
     public void reorder(User instructor, Long courseId, List<Long> lessonIds) {
         Course course = getOwnedCourse(instructor, courseId);
+        if (lessonIds == null) {
+            throw new BadRequestException("Darslar ro'yxati berilmagan");
+        }
 
         List<Lesson> lessons = lessonRepository.findByCourseIdOrderByOrderIndexAsc(course.getId());
         Map<Long, Lesson> byId = lessons.stream()
@@ -84,7 +91,7 @@ public class LessonService {
                 .orElseThrow(() -> new NotFoundException("Kurs topilmadi"));
 
         if (!course.getInstructor().getId().equals(instructor.getId())) {
-            throw new BadRequestException("Bu kurs sizga tegishli emas");
+            throw new AccessDeniedException("Bu kurs sizga tegishli emas");
         }
 
         return course;

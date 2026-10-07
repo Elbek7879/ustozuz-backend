@@ -40,3 +40,6 @@ build/
 ### Lokal maxfiy sozlamalar ###
 /config/
 /out/
+
+### Claude preview sozlamasi ###
+/.claude/

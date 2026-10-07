@@ -10,4 +10,6 @@ public interface LessonProgressRepository extends JpaRepository<LessonProgress, 
     List<LessonProgress> findByEnrollmentId(Long enrollmentId);
 
     Optional<LessonProgress> findByEnrollmentIdAndLessonId(Long enrollmentId, Long lessonId);
+
+    void deleteByLessonId(Long lessonId);
 }

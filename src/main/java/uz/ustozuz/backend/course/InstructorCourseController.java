@@ -36,6 +36,12 @@ public class InstructorCourseController {
         return courseService.findByInstructor(instructor.getId());
     }
 
+    @GetMapping("/{id}")
+    public InstructorCourseResponse getOne(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id) {
+        User instructor = currentUserService.require(jwt);
+        return courseService.findOwned(instructor, id);
+    }
+
     @PostMapping
     public InstructorCourseResponse create(
             @AuthenticationPrincipal Jwt jwt,

@@ -6,5 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    List<Order> findByBuyerId(Long buyerId);
+    List<Order> findByBuyerIdOrderByCreatedAtDesc(Long buyerId);
+
+    boolean existsByItems_Course_Id(Long courseId);
 }
