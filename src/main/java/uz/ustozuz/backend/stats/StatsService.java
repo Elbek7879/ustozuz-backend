@@ -23,7 +23,10 @@ public class StatsService {
     public PublicStatsResponse getPublicStats() {
         long totalCourses = courseRepository.countByStatus(CourseStatus.ACTIVE);
         long totalInstructors = userRepository.countByRole(Role.INSTRUCTOR);
-        long totalStudents = userRepository.countByRole(Role.STUDENT);
+        // Kurslarga yozilganlar soni (kartochkalardagi raqamlar bilan bir xil manba)
+        long totalStudents = Math.max(
+                courseRepository.sumStudentsCount(CourseStatus.ACTIVE),
+                userRepository.countByRole(Role.STUDENT));
         double avgRating = courseRepository.averageRating(CourseStatus.ACTIVE);
 
         return new PublicStatsResponse(totalCourses, totalStudents, totalInstructors, avgRating);
