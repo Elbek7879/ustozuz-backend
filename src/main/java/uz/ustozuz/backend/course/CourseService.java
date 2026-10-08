@@ -233,9 +233,9 @@ public class CourseService {
     }
 
     private CourseDetailResponse toDetail(Course c) {
-        List<String> lessons = lessonRepository.findByCourseIdOrderByOrderIndexAsc(c.getId()).stream()
-                .map(Lesson::getTitle)
-                .toList();
+        List<Lesson> courseLessons = lessonRepository.findByCourseIdOrderByOrderIndexAsc(c.getId());
+        List<String> lessons = courseLessons.stream().map(Lesson::getTitle).toList();
+        String previewVideoUrl = courseLessons.isEmpty() ? null : courseLessons.get(0).getVideoUrl();
 
         return new CourseDetailResponse(
                 c.getId(),
@@ -249,7 +249,8 @@ public class CourseService {
                 c.getStudentsCount(),
                 c.getPriceAmount(),
                 imageOrDefault(c),
-                lessons
+                lessons,
+                previewVideoUrl
         );
     }
 

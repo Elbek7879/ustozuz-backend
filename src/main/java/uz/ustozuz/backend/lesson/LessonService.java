@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 import uz.ustozuz.backend.common.exception.BadRequestException;
 import uz.ustozuz.backend.common.exception.NotFoundException;
+import uz.ustozuz.backend.common.util.YouTubeUtil;
 import uz.ustozuz.backend.course.Course;
 import uz.ustozuz.backend.course.CourseRepository;
 import uz.ustozuz.backend.enrollment.LessonProgressRepository;
@@ -44,6 +45,7 @@ public class LessonService {
         lesson.setCourse(course);
         lesson.setTitle(request.title().trim());
         lesson.setOrderIndex(nextIndex);
+        lesson.setVideoUrl(YouTubeUtil.normalize(request.videoUrl()));
 
         lessonRepository.save(lesson);
         return toResponse(lesson);
@@ -53,6 +55,7 @@ public class LessonService {
     public LessonResponse update(User instructor, Long courseId, Long lessonId, LessonRequest request) {
         Lesson lesson = getOwnedLesson(instructor, courseId, lessonId);
         lesson.setTitle(request.title().trim());
+        lesson.setVideoUrl(YouTubeUtil.normalize(request.videoUrl()));
         lessonRepository.save(lesson);
         return toResponse(lesson);
     }

@@ -52,6 +52,45 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         createDemoLessons();
+        createDemoVideos();
+    }
+
+    // Namunaviy darslarga o'zbek tilidagi mos YouTube videolari (faqat videosi yo'q darslarga)
+    private void createDemoVideos() {
+        Map<String, List<String>> videosBySlug = Map.of(
+                "frontend-dasturlash-noldan-mutaxassisgacha", List.of(
+                        "hVZFldI9suM", "xcGtfYUfDLo", "uUULF8ikQoY", "zZFXvdQlxco", "i24GQAhdvoE", "mrjtDaTkIYs"),
+                "uiux-dizayn-asoslari", List.of(
+                        "1v179Eej-ZU", "EknOtROkl3I", "7ZD5p0518Qw", "7MwzFs9V5jc", "HCBdZIwtGhU"),
+                "raqamli-marketing-va-smm", List.of(
+                        "iDucQliRjAo", "g792jF8-xRE", "n0TQZbzqdXY", "H4scDUTiN8w", "mY7ddgYzsY4"),
+                "python-bilan-suniy-intellekt", List.of(
+                        "fj_GLU344bQ", "mFS6EayOC60", "1hNxd2ldlRY", "cKgQNIgnCF4", "CHU6uI9ajBw"),
+                "backend-dasturlash-java-asoslari", List.of(
+                        "GRb9knDmzmU", "Va-46Zpsexc", "3i7ud31l-jk", "poPp0IK6MRA", "K3bqW9pout4"),
+                "ingliz-tili-nutq-va-grammatika", List.of(
+                        "jXRvqhDJrNY", "q4wRkhHfVu8", "t8CZSCeolzE", "QrZna-ZqEJ0", "G2XoPtyu9Qo"),
+                "portret-fotografiya-siri", List.of(
+                        "kCvkNAvRBnc", "TKyMNTGfL1s", "FANHTYIIoW0", "P903KWgIZBw", "r46h89pNnKI"),
+                "shaxsiy-moliyani-boshqarish", List.of(
+                        "RzbJu2_GZkk", "eTAYj6VTQZ4", "HVWkZgRNOcs", "dZuvL9RW-fI", "ihnjDJPT7r0"),
+                "uy-sharoitida-fitnes-dasturi", List.of(
+                        "wgIc48751Og", "StB5igY9viA", "HYR0hI6DIWE", "kNq1QkfoZ-I", "XJxUrMCMLPg"),
+                "gitarada-chalishni-organish", List.of(
+                        "Z6udX7ahrHQ", "mMUYvWkj4oo", "ppx5_IKNi2A", "I7uSGLqlLe4", "cRtHLAYq4cA")
+        );
+
+        videosBySlug.forEach((slug, videoIds) ->
+                courseRepository.findBySlug(slug).ifPresent(course -> {
+                    List<Lesson> lessons = lessonRepository.findByCourseIdOrderByOrderIndexAsc(course.getId());
+                    for (int i = 0; i < lessons.size() && i < videoIds.size(); i++) {
+                        Lesson lesson = lessons.get(i);
+                        if (lesson.getVideoUrl() == null) {
+                            lesson.setVideoUrl("https://www.youtube.com/watch?v=" + videoIds.get(i));
+                            lessonRepository.save(lesson);
+                        }
+                    }
+                }));
     }
 
     // Namunaviy kurslarga darslar: faqat darsi yo'q bo'lsa qo'shiladi (eski bazalar uchun ham)

@@ -14,6 +14,8 @@ public record CourseDetailResponse(
         int studentsCount,
         long price,
         String imageUrl,
-        List<String> lessons
+        List<String> lessons,
+        // Birinchi darsning videosi — sotib olishdan oldin bepul ko'rish uchun
+        String previewVideoUrl
 ) {
 }
