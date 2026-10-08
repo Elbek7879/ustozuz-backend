@@ -2,14 +2,13 @@ package uz.ustozuz.backend.certificate.dto;
 
 import java.time.Instant;
 
-public record CertificateResponse(
-        Long id,
+// Ochiq tekshiruv sahifasi uchun: faqat sertifikatda yozilgan ma'lumotlar (email va boshqalar yo'q)
+public record PublicCertificateResponse(
         String number,
         String studentName,
         String courseTitle,
         String courseSlug,
         String instructorName,
-        Instant issuedAt,
-        String verifyCode
+        Instant issuedAt
 ) {
 }

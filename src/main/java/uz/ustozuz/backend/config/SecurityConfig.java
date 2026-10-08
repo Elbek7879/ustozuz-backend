@@ -85,7 +85,7 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/auth/**", "/api/health", "/api/stats/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/contact").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/courses/**", "/api/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/courses/**", "/api/categories/**", "/api/certificates/verify/**").permitAll()
                         .requestMatchers("/api/instructor/**").hasRole("INSTRUCTOR")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
