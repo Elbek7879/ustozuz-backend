@@ -34,7 +34,8 @@ Sayt: **https://ustozuz.vercel.app**
 5. Dars sahifasi: video saytda o'ynaydi, o'ngda **"Kurs mazmuni"**, yuqorida progress doirasi.
    **"Darsni tugatdim"** → keyingi darsga o'tadi, progress oshadi.
 6. Oxirgi dars → ekranga **konfetti 🎉** va "Tabriklaymiz! Sertifikat berildi".
-7. **Sertifikatlarim** → Ko'rish → ismingiz yozilgan sertifikat → **Chop etish / PDF saqlash**.
+7. **Sertifikatlarim** → Ko'rish → rasmiy uslubdagi sertifikat (oltin ramka, medal, imzo) →
+   **Yuklab olish (PNG)** yoki **PDF** — fayl bir bosishda yuklanadi.
 8. Sertifikatdagi **QR kod**: hakamga telefoni bilan skanerlashni taklif qiling → "✅ Sertifikat haqiqiy"
    sahifasi ochiladi (ism, kurs, ustoz, sana). Kodni taxmin qilib bo'lmaydi — soxta sertifikat o'tmaydi.
 
