@@ -44,6 +44,9 @@ Sayt: **https://ustozuz.vercel.app**
   Android (Chrome): ⋮ menyu → **Ilovani o'rnatish** / **Bosh ekranga qo'shish**;
   iPhone (Safari): **Ulashish** tugmasi → **Bosh ekranga**.
 - Taqdimotda bosh ekrandagi **UstozUz** ikonkasini ochib ko'rsating — sayt ilova kabi, manzil qatorisiz ochiladi.
+- ⚠️ Faqat **Google Chrome** orqali o'rnating: Yandex / Opera eski andozada paketlaydi va Android
+  "xavfli / eski versiya uchun" ogohlantirishini chiqaradi.
+- O'rnatishni hakamlar oldida **jonli qilmang** — faqat oldindan o'rnatilgan ikonkani oching.
 
 ## 3. Ustoz yo'li (1–2 daqiqa)
 
