@@ -19,7 +19,8 @@ Sayt: **https://ustozuz.vercel.app**
 
 1. Bosh sahifa: pastga aylantiring — bo'limlar silliq paydo bo'ladi, statistika raqamlari **sanab chiqadi**.
    Kategoriyalar, mashhur kurslar, statistika — **hammasi bazadan**.
-2. Yuqoridagi qidiruvga `python` yozing → natija.
+2. Yuqoridagi qidiruvga `dastur` deb yozing → natijalar **yozayotganda darhol** rasm va narx bilan chiqadi
+   (↓ / Enter bilan tanlash mumkin).
 3. Kurs sahifasini oching → muqovadagi **"Kursni bepul ko'rish"** → birinchi dars videosi
    **saytning o'zida** ochiladi (YouTube'ga o'tmaydi).
 4. (Ixtiyoriy) Sayt havolasini Telegram'da yuboring → chiroyli **ulashish kartochkasi** chiqadi.
@@ -34,6 +35,15 @@ Sayt: **https://ustozuz.vercel.app**
    **"Darsni tugatdim"** → keyingi darsga o'tadi, progress oshadi.
 6. Oxirgi dars → ekranga **konfetti 🎉** va "Tabriklaymiz! Sertifikat berildi".
 7. **Sertifikatlarim** → Ko'rish → ismingiz yozilgan sertifikat → **Chop etish / PDF saqlash**.
+8. Sertifikatdagi **QR kod**: hakamga telefoni bilan skanerlashni taklif qiling → "✅ Sertifikat haqiqiy"
+   sahifasi ochiladi (ism, kurs, ustoz, sana). Kodni taxmin qilib bo'lmaydi — soxta sertifikat o'tmaydi.
+
+## Telefonda ilova (30 soniya)
+
+- Taqdimotdan oldin telefoningizga o'rnatib qo'ying:
+  Android (Chrome): ⋮ menyu → **Ilovani o'rnatish** / **Bosh ekranga qo'shish**;
+  iPhone (Safari): **Ulashish** tugmasi → **Bosh ekranga**.
+- Taqdimotda bosh ekrandagi **UstozUz** ikonkasini ochib ko'rsating — sayt ilova kabi, manzil qatorisiz ochiladi.
 
 ## 3. Ustoz yo'li (1–2 daqiqa)
 
